@@ -1,0 +1,8 @@
+# Only manifests and Rust source enter the build context.
+# Local build output, Git/IDE data, certificates and keys stay on the host.
+**
+!Cargo.toml
+!Cargo.lock
+!src/
+!src/**/
+!src/**/*.rs

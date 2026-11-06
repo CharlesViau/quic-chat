@@ -1,0 +1,36 @@
+name: quic-chat
+
+x-runtime: &runtime
+  image: quic-chat:local
+  build:
+    context: .
+  init: true
+  read_only: true
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+
+services:
+  server:
+    <<: *runtime
+    command: ["server"]
+    environment:
+      # The server will read this when its networking is implemented.
+      QUIC_CHAT_LISTEN_ADDR: "0.0.0.0:5000"
+    ports:
+      # Local development: only this computer can reach the published port.
+      - "127.0.0.1:5000:5000/udp"
+    volumes:
+      - identity:/var/lib/quic-chat:ro
+
+  setup:
+    <<: *runtime
+    command: ["setup"]
+    # Explicitly run this tool; starting the server must not regenerate its key.
+    profiles: ["tools"]
+    volumes:
+      - identity:/var/lib/quic-chat
+
+volumes:
+  identity:
